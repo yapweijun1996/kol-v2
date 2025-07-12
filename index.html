@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KOL Management Admin Panel</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="top-bar">
+        <h1>KOL Dashboard</h1>
+    </header>
+
+    <aside id="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="#" id="nav-view-kols">View KOLs</a></li>
+            <li><a href="#" id="nav-general-code">General Code</a></li>
+            <li id="report-toggle">
+                <a href="#" class="nav-link">
+                    <span class="title">Report</span>
+                    <span class="arrow right">&#9654;</span>
+                </a>
+                <ul id="report-details" class="sub-menu hidden">
+                    <li class="nav-item"><a href="#" id="nav-kol-followers-report" class="nav-link">KOL Followers Report</a></li>
+                    <li class="nav-item"><a href="#" id="nav-kol-package-quotation-report" class="nav-link">KOL Package Quotation Report</a></li>
+                </ul>
+            </li>
+            <li><a href="#" id="nav-settings">Settings</a></li>
+        </ul>
+    </aside>
+
+    <main id="main-content">
+        <div id="general-code-section" class="hidden">
+            <h2>General Code Management</h2>
+            
+            <!-- Countries Section -->
+            <div class="sub-section">
+                <h3>Countries</h3>
+                <button class="btn-primary" id="add-country-btn">Add Country</button>
+                <table id="countries-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="countries-list">
+                        <!-- Country rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Gender Section -->
+            <div class="sub-section">
+                <h3>Gender</h3>
+                <button class="btn-primary" id="add-gender-btn">Add Gender</button>
+                <table id="genders-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="genders-list">
+                        <!-- Gender rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Age Ranges Section -->
+            <div class="sub-section">
+                <h3>Age Ranges</h3>
+                <button class="btn-primary" id="add-age-range-btn">Add Age Range</button>
+                <table id="age-ranges-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="age-ranges-list">
+                        <!-- Age range rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Packages Section -->
+            <div class="sub-section">
+                <h3>Packages</h3>
+                <button class="btn-primary" id="add-package-btn">Add Package</button>
+                <table id="packages-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packages-list">
+                        <!-- Package rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Platforms Section -->
+            <div class="sub-section">
+                <h3>Platforms</h3>
+                <button class="btn-primary" id="add-platform-btn-general">Add Platform</button>
+                <table id="platforms-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="platforms-list">
+                        <!-- Platform rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="report-section" class="hidden">
+            <h2>KOL Followers Report</h2>
+            <div class="sub-section">
+                <h3>Prelim</h3>
+                <div class="form-group">
+                    <label for="platform-select-followers-report">Select Platform:</label>
+                    <select id="platform-select-followers-report">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <button class="btn-primary" id="generate-report-btn">Submit</button>
+            </div>
+            <div class="sub-section">
+                <h3>Report Results</h3>
+                <table id="report-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Total Followers</th>
+                            <!-- Add more headers as needed -->
+                        </tr>
+                    </thead>
+                    <tbody id="report-list">
+                        <!-- Report rows will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="kol-followers-chart"></canvas>
+                </div>
+                <button class="btn-secondary" id="ai-chart-btn" style="display: none; margin-top: 10px;">AI Chart Analysis</button>
+                <div id="ai-controls" style="display: none; margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="ai-chart-type-select">Select Chart Type:</label>
+                        <select id="ai-chart-type-select">
+                            <option value="bar">Bar</option>
+                            <option value="line">Line</option>
+                            <option value="pie">Pie</option>
+                            <option value="doughnut">Doughnut</option>
+                            <option value="polarArea">Polar Area</option>
+                            <option value="radar">Radar</option>
+                            <option value="scatter">Scatter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-summary-prompt">AI Summary Prompt:</label>
+                        <textarea id="ai-summary-prompt" rows="3" placeholder="e.g., 'Summarize the top 3 KOLs'"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-language-select">Select Language:</label>
+                        <select id="ai-language-select">
+                            <option value="English">English</option>
+                            <option value="Mandarin">Mandarin</option>
+                            <option value="Malay">Malay</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container" style="margin-top: 20px;">
+                    <canvas id="ai-generated-chart" style="min-height: 433px;"></canvas>
+                </div>
+                <div id="ai-explanation" style="display: none; margin-top: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></div>
+            </div>
+        </div>
+        <div id="kol-package-quotation-report-section" class="hidden">
+            <h2>KOL Package Quotation Report</h2>
+            <div class="sub-section">
+                <h3>Prelim Option</h3>
+                <div class="form-group">
+                    <label for="package-select">Select Package:</label>
+                    <select id="package-select">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="platform-select-report">Select Platform:</label>
+                    <select id="platform-select-report">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <button class="btn-primary" id="generate-package-report-btn">Submit</button>
+            </div>
+            <div class="sub-section">
+                <h3>Report Results</h3>
+                <table id="package-report-table">
+                    <thead>
+                        <tr>
+                            <th>KOL Name</th>
+                            <th>Platform</th>
+                            <th>Followers</th>
+                            <th>Quotation Price</th>
+                            <th>Cost / 1k followers (SGD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="package-report-list">
+                        <!-- Report rows will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="kol-package-quotation-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div id="settings-section" class="hidden">
+            <h2>Settings</h2>
+            <p>IndexedDB Usage and Quota Information:</p>
+            <ul id="indexeddb-info">
+                <li><strong>Usage:</strong> <span id="indexeddb-usage">Calculating...</span></li>
+                <li><strong>Quota:</strong> <span id="indexeddb-quota">Calculating...</span></li>
+            </ul>
+            <div class="settings-actions" style="margin-top: 20px;">
+                <button id="export-indexeddb-btn" class="btn-primary">Export IndexedDB</button>
+                <input type="file" id="import-indexeddb-file" accept=".json" style="display: none;">
+                <button id="import-indexeddb-btn" class="btn-secondary">Import IndexedDB</button>
+            </div>
+        </div>
+        <div id="view-kols-section">
+            <h2>All KOLs</h2>
+            <button class="btn-primary" id="add-kol-btn-from-view">Add KOL</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Platforms</th>
+                        <th>Total Followers</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="kol-list">
+                    <!-- KOL rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="add-kol-section" class="hidden">
+            <h2>Add New KOL</h2>
+            <form id="add-kol-form">
+                <input type="text" id="add-name" placeholder="Name" required>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Add KOL</button>
+                    <button type="button" id="cancel-add-kol" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="kol-detail-section" class="hidden">
+            <button id="back-to-list-btn" class="btn-secondary" style="margin-bottom: 20px;">&larr; Back to List</button>
+            <h2 id="kol-detail-name"></h2>
+            <div class="tab-nav">
+                <button class="tab-link active" data-tab="platforms">Platforms</button>
+            </div>
+            <div id="platforms-tab-content">
+                 <table>
+                    <thead>
+                        <tr>
+                            <th>Platform</th>
+                            <th>Handle</th>
+                            <th>Followers</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kol-platforms-list">
+                        <!-- Platform rows will be inserted here -->
+                    </tbody>
+                </table>
+                <button id="add-platform-btn" class="btn-primary" style="margin-top: 20px;">Add Platform</button>
+                
+            </div>
+        </div>
+    </main>
+
+        <div id="add-platform-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button class="modal-close-btn">&times;</button>
+                <h2>Add New Platform</h2>
+                <form id="add-platform-form">
+                    <select id="add-platform-name" required>
+                        <option value="">Select Platform</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                    <input type="text" id="add-platform-handle" placeholder="Handle (e.g., @username)" required>
+                    <input type="number" id="add-platform-followers" placeholder="Followers" required>
+                    <button type="submit" class="btn-primary">Add Platform</button>
+                </form>
+            </div>
+        </div>
+
+    <div id="edit-platform-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Edit Platform</h2>
+            <form id="edit-platform-form">
+                <input type="hidden" id="edit-platform-id">
+                <select id="edit-platform-name" required>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+                <input type="text" id="edit-platform-handle" placeholder="Handle" required>
+                <input type="number" id="edit-platform-followers" placeholder="Followers" required>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-country-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Add New Country Data</h2>
+            <form id="add-country-form">
+                <div id="country-rows-container">
+                    <!-- Country input rows will be added here dynamically -->
+                </div>
+                <button type="button" id="add-country-row-btn" class="btn-secondary">Add More Country</button>
+                <button type="submit" class="btn-primary">Save Countries</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reusable Modal for General Code -->
+    <div id="general-code-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2 id="general-code-modal-title"></h2>
+            <form id="general-code-form">
+                <input type="hidden" id="general-code-id">
+                <input type="text" id="general-code-code" placeholder="Code" required>
+                <input type="text" id="general-code-desc" placeholder="Description" required>
+                <button type="submit" class="btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+
+    <div id="manage-details-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Manage Platform Details</h2>
+            <form id="manage-details-form">
+                <div class="sub-section">
+                    <h3>Countries</h3>
+                    <div id="countries-management-container"></div>
+                    <button type="button" id="add-managed-country-row-btn" class="btn-secondary">Add Country</button>
+                </div>
+                <div class="sub-section">
+                    <h3>Genders</h3>
+                    <div id="genders-management-container"></div>
+                    <button type="button" id="add-managed-gender-row-btn" class="btn-secondary">Add Gender</button>
+                </div>
+                <div class="sub-section">
+                    <h3>Age Ranges</h3>
+                    <div id="age-ranges-management-container"></div>
+                    <button type="button" id="add-managed-age-range-row-btn" class="btn-secondary">Add Age Range</button>
+                </div>
+                <div class="sub-section">
+                    <h3>Packages</h3>
+                    <div id="packages-management-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Details</button>
+                    <button type="button" id="cancel-manage-details" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>AI-Powered CSV to Chart + Explanation</title>
+		
+		<!-- Primary Meta Tags -->
+		<meta name="description" content="Upload your CSV files and automatically generate interactive charts and professional explanations powered by AI. Easy data visualization and analysis for business and personal use." />
+		<meta name="keywords" content="CSV chart generator, AI data visualization, Chart.js, AI explanation, CSV to chart, business intelligence, data analysis tool" />
+		<meta name="author" content="Yap Wei Jun" />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="AI-Powered CSV to Chart & Explanation Tool" />
+		<meta property="og:description" content="Upload your CSV files and automatically generate interactive charts and professional explanations powered by AI." />
+		<meta property="og:url" content="https://yapweijun1996.github.io/CSV-AI-Chart-and-Explanation-v4/" />
+		<meta property="og:image" content="https://yapweijun1996.github.io/CSV-AI-Chart-and-Explanation-v4/og_img.jpg" />
+		
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="AI-Powered CSV to Chart & Explanation Tool" />
+		<meta name="twitter:description" content="Upload your CSV files and automatically generate interactive charts and professional explanations powered by AI." />
+		<meta name="twitter:image" content="https://yapweijun1996.github.io/CSV-AI-Chart-and-Explanation-v4/og_img.jpg" />
+		
+		<!-- SEO-friendly canonical URL -->
+		<link rel="canonical" href="https://yapweijun1996.github.io/CSV-AI-Chart-and-Explanation-v4/" />
+		
+		<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+		
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px auto;
+				max-width: 900px;
+			}
+			h1 {
+				margin-bottom: 10px;
+			}
+			ul li {
+				margin-top: 10px;
+			}
+			#csvInput,
+			#chartTypeSelect {
+				margin-bottom: 10px;
+			}
+			#chartContainer {
+				border: 1px solid #ccc;
+				background: white;
+				padding: 10px;
+				position: relative;
+			}
+			#explanation {
+				margin-top: 20px;
+				background: #eef;
+				padding: 15px;
+				border-radius: 4px;
+				min-height: 80px;
+				position: relative;
+			}
+			#explanation strong {
+				font-weight: 700;
+			}
+			#explanationText {
+				font-family: "FangSong", Arial, sans-serif;
+			}
+			#dataTableContainer {
+				margin-top: 20px;
+				position: relative;
+			}
+			#dataTable table {
+				font-family: Arial, sans-serif;
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 10px;
+			}
+			#dataTable th,
+			#dataTable td {
+				border: 1px solid #ccc;
+				padding: 8px;
+				text-align: left;
+			}
+			#dataTable th {
+				background-color: #f2f2f2;
+			}
+			.loading-spinner {
+				display: none;
+				width: 24px;
+				height: 24px;
+				border: 3px solid #ccc;
+				border-top-color: #007acc;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				vertical-align: middle;
+				margin-left: 8px;
+				position: absolute;
+				top: 10px;
+			}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+			#loadingChart {
+				left: 10px;
+				top: 15px;
+			}
+			#loadingExplanation {
+				right: 10px;
+			}
+			#loadingDataTable {
+				left: 10px;
+				top: 35px;
+			}
+			#explanation strong,
+			#dataTableContainer > strong {
+				display: inline-flex;
+				align-items: center;
+			}
+			#saveHtmlBtn {
+				position: fixed;
+				top: 10px;
+				right: 10px;
+				z-index: 9999;
+				padding: 8px 12px;
+				font-size: 14px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<button id="saveHtmlBtn" title="Save current chart, table and explanation as standalone HTML">Save as HTML</button>
+		
+		<div style="margin-bottom: 15px;">
+			<h1>Upload CSV & AI-Driven Chart + Explanation</h1>
+			
+			<input type="file" id="csvInput" accept=".csv" />
+			<br />
+			
+			<label for="chartTypeSelect">Chart Type:</label>
+			<select id="chartTypeSelect">
+				<option value="bar" selected>Bar Chart</option>
+				<option value="line">Line Chart</option>
+				<option value="area">Area Chart</option>
+				<option value="bubble">Bubble Chart</option>
+				<option value="doughnut">Doughnut Chart</option>
+				<option value="pie">Pie Chart</option>
+				<option value="polarArea">Polar Area Chart</option>
+				<option value="radar">Radar Chart</option>
+				<option value="scatter">Scatter Chart</option>
+			</select>
+			
+			<br />
+			<label for="languageSelect">Summary Language:</label>
+			<select id="languageSelect">
+				<option value="English" selected>English</option>
+				<option value="Mandarin">Mandarin (中文)</option>
+				<option value="Malay">Malay (Bahasa Melayu)</option>
+				<option value="Japanese">Japanese (日本語)</option>
+				<option value="Korean">Korean (한국어)</option>
+				<option value="Spanish">Spanish (Español)</option>
+				<option value="French">French (Français)</option>
+				<option value="German">German (Deutsch)</option>
+				<option value="Hindi">Hindi (हिन्दी)</option>
+				<option value="Arabic">Arabic (العربية)</option>
+				<option value="Portuguese">Portuguese (Português)</option>
+				<option value="Russian">Russian (Русский)</option>
+			</select>
+		</div>
+		
+		<div id="chartContainer">
+			<canvas id="chartCanvas" width="800" height="400"></canvas>
+			<div id="loadingChart" class="loading-spinner" title="Generating chart..."></div>
+		</div>
+		
+		<div id="explanation">
+			<strong>Explanation:
+				<div id="loadingExplanation" class="loading-spinner" title="Generating explanation..."></div>
+			</strong>
+			<div id="explanationText" contenteditable="true" spellcheck="true" style="min-height: 100px; outline: none; cursor: text;">Waiting for CSV upload...</div>
+		</div>
+		
+		<div id="dataTableContainer">
+			<strong>Extracted Table Data:
+				<div id="loadingDataTable" class="loading-spinner" title="Extracting data..."></div>
+			</strong>
+			<div id="dataTable">No data loaded yet.</div>
+		</div>
+		
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		
+		<!-- jQuery and DataTables JS -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+		
+		<script>
+			// ===== Gemini AI integration section =====
+			const generationConfig = {
+				temperature: 1,
+				topP: 0.95,
+				topK: 40,
+				maxOutputTokens: 65536,
+				responseMimeType: "text/plain",
+				thinkingConfig: { thinkingBudget: -1 }
+			};
+			
+			var KEY = "20250710";
+			
+			function decrypt(ciphertext) {
+				let decodedMessage = '';
+				for (let i = 0; i < ciphertext.length; i += 3) {
+					let numStr = ciphertext.slice(i, i + 3);
+					let encryptedChar = parseInt(numStr);
+					let keyChar = KEY.charCodeAt((i / 3) % KEY.length);
+					let decryptedChar = encryptedChar ^ keyChar;
+					decodedMessage += String.fromCharCode(decryptedChar);
+				}
+				return decodedMessage;
+			}
+			
+			var apiKeys = [
+				"115121072084099078114106098029005120126090119105075090121123125069122116094086126071121120084125067121099109004000086",
+				"115121072084099078115106107073097127003091070122066093074007070026117113095097102119085065092117113084101066074065070"
+			];
+			
+			let currentKeyIndex = 0;
+			
+			async function sendApiRequest(url, requestBody) {
+				let tries = 0;
+				const maxTries = apiKeys.length;
+				
+				while (tries < maxTries) {
+					var apiKey = apiKeys[currentKeyIndex];
+					apiKey = decrypt(apiKey);
+					
+					const fullUrl = url + "?key=" + apiKey;
+					
+					try {
+						const response = await fetch(fullUrl, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify(requestBody),
+						});
+						
+						if (response.ok) {
+							const data = await response.json();
+							return data;
+						} else {
+							currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+							tries++;
+						}
+					} catch (err) {
+						currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+						tries++;
+					}
+				}
+				throw new Error("All API keys failed.");
+			}
+			
+			async function startChatSession(selectedModel) {
+				return {
+					sendMessage: async function(messageData) {
+						let userMessage = typeof messageData === "string"
+						? { role: "user", parts: [{ text: messageData }] }
+						: messageData;
+						const requestBody = { contents: [userMessage], generationConfig };
+						const url = "https://generativelanguage.googleapis.com/v1beta/models/" + selectedModel + ":generateContent";
+						
+						const result = await sendApiRequest(url, requestBody);
+						
+						if (result.candidates && result.candidates.length > 0) {
+							return result.candidates[0].content.parts;
+						} else {
+							throw new Error("No response from API");
+						}
+					}
+				};
+			}
+			// ===== End Gemini AI integration =====
+			
+			let currentChart = null;
+			
+			const csvInput = document.getElementById('csvInput');
+			const chartTypeSelect = document.getElementById('chartTypeSelect');
+			const languageSelect = document.getElementById('languageSelect');
+			const loadingChart = document.getElementById('loadingChart');
+			const loadingExplanation = document.getElementById('loadingExplanation');
+			const loadingDataTable = document.getElementById('loadingDataTable');
+			const explanationEl = document.getElementById('explanationText');
+			const dataTableDiv = document.getElementById('dataTable');
+			const saveHtmlBtn = document.getElementById('saveHtmlBtn');
+			
+			function extractFirstJSONObject(text) {
+				text = text.trim();
+				if (text.startsWith("```json")) text = text.slice(7).trim();
+				if (text.endsWith("```")) text = text.slice(0, -3).trim();
+				
+				let start = text.indexOf('{');
+					let startArr = text.indexOf('[');
+					if (startArr >= 0 && (startArr < start || start < 0)) start = startArr;
+					if (start < 0) throw new Error("No JSON object found");
+					
+					let braceCount = 0;
+					let inString = false;
+					for (let i = start; i < text.length; i++) {
+						const ch = text[i];
+						if (ch === '"' && text[i - 1] !== '\\') inString = !inString;
+						if (!inString) {
+							if (ch === '{' || ch === '[') braceCount++;
+							else if (ch === '}' || ch === ']') braceCount--;
+							if (braceCount === 0) return text.slice(start, i + 1);
+						}
+					}
+					throw new Error("No complete JSON object found");
+				}
+				
+				function renderChart(config, chartType) {
+					if (chartType === 'area' && config.type === 'line' && Array.isArray(config.data.datasets)) {
+						config.data.datasets.forEach(ds => {
+							ds.fill = true;
+							if (!ds.backgroundColor) ds.backgroundColor = 'rgba(75, 192, 192, 0.2)';
+						});
+					}
+					const ctx = document.getElementById('chartCanvas').getContext('2d');
+					if (currentChart) currentChart.destroy();
+					currentChart = new Chart(ctx, config);
+				}
+				
+				function renderExplanation(markdownText) {
+					explanationEl.innerHTML = marked.parse(markdownText);
+				}
+				
+				function renderDataTable(data) {
+					window.cleanDataCache = data;
+					if (!data || data.length === 0) {
+						dataTableDiv.innerHTML = "<p>No data to display.</p>";
+						return;
+					}
+					const columns = Object.keys(data[0]);
+					let html = `<table id="dataTableTable" class="display" style="width:100%"><thead><tr>`;
+					columns.forEach(col => html += `<th>${col}</th>`);
+					html += `</tr></thead><tbody>`;
+					data.forEach(row => {
+						html += '<tr>';
+						columns.forEach(col => {
+							html += `<td>${row[col] ?? ''}</td>`;
+						});
+						html += '</tr>';
+					});
+					html += `</tbody><tfoot><tr>`;
+					columns.forEach(() => html += '<th></th>');
+					html += `</tr></tfoot></table>`;
+					dataTableDiv.innerHTML = html;
+					
+					initializeDataTableWithSubtotal(columns, data);
+				}
+				
+				function initializeDataTableWithSubtotal(columns, data) {
+					if ($.fn.DataTable.isDataTable('#dataTableTable')) {
+						$('#dataTableTable').DataTable().destroy();
+					}
+					const numericCols = columns.filter(col =>
+					data.every(row => {
+						const val = row[col];
+						return val !== null && val !== undefined && !isNaN(parseFloat(String(val).replace(/,/g, ''))) && isFinite(parseFloat(String(val).replace(/,/g, '')));
+					})
+					);
+					$('#dataTableTable').DataTable({
+						paging: true,
+						searching: true,
+						info: true,
+						order: [],
+						// === ADD THIS LINE ===
+						lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+						footerCallback: function (row, dataRows, start, end, display) {
+							let api = this.api();
+							$(api.columns().footer()).html('');
+							
+							numericCols.forEach(col => {
+								const colIndex = columns.indexOf(col);
+								let total = api.column(colIndex, { page: 'current' }).data().reduce(function (a, b) {
+									let num = parseFloat(String(b).replace(/,/g, ''));
+									return a + (isNaN(num) ? 0 : num);
+								}, 0);
+								const formattedTotal = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+								$(api.column(colIndex).footer()).html(formattedTotal);
+							});
+							
+							let totalLabelPlaced = false;
+							for (let i = 0; i < columns.length; i++) {
+								if (!numericCols.includes(columns[i])) {
+									$(api.column(i).footer()).html('Total');
+									totalLabelPlaced = true;
+									break;
+								}
+							}
+							if (!totalLabelPlaced && columns.length > 0) {
+								$(api.column(0).footer()).html('Total');
+							}
+						}
+					});
+				}
+				
+				async function aiAgentExtractTable(rawCsvText, maxRetry = 3) {
+					const prompt = `
+					You are a helpful assistant specialized in data extraction.
+					Given the following CSV file content as plain text:
+					\`\`\`
+					${rawCsvText}
+					\`\`\`
+					Please extract and generate a clean JSON array of objects representing the main tabular data only.
+					- Ignore any titles, headers unrelated to the data, summaries, or empty rows.
+					- Infer consistent and meaningful keys from the column headers.
+					- For numeric values formatted with commas (e.g., "999,999,999.99"), remove the commas so they become plain numbers (e.g., "999999999.99").
+					- Ensure the JSON is well-structured, with uniform keys for all objects.
+					- Output ONLY the JSON array without any additional explanation or text.
+					`;
+					let attempt = 0;
+					while (attempt < maxRetry) {
+						try {
+							loadingDataTable.style.display = 'inline-block';
+							const session = await startChatSession("gemini-2.5-flash");
+							const responseParts = await session.sendMessage(prompt);
+							loadingDataTable.style.display = 'none';
+							const responseText = responseParts.filter(p => p.text).map(p => p.text).join('').trim();
+							const jsonText = extractFirstJSONObject(responseText);
+							const jsonData = JSON.parse(jsonText);
+							return jsonData;
+						} catch (err) {
+							console.log("Retry: aiAgentExtractTable");
+							loadingDataTable.style.display = 'none';
+							attempt++;
+							if (attempt >= maxRetry) throw new Error("Failed to extract table: " + err.message);
+							await new Promise(r => setTimeout(r, 500));
+						}
+					}
+				}
+				
+				async function aiAgentGenerateChartConfig(cleanData, chartType, maxRetry = 3) {
+					let promptChartType = chartType === 'area' ? 'line' : chartType;
+					const prompt = `
+					You are a professional assistant generating Chart.js configuration.
+					Input: A JSON array of data objects representing tabular data:
+					${JSON.stringify(cleanData)}
+					Task: Generate a **valid JSON object** representing a Chart.js configuration for a "${promptChartType}" chart.
+					Requirements:
+					- Include these keys: "type", "data", and "options".
+					- In "data", create "labels" from suitable data columns, and "datasets" with numeric data.
+					- In "options", include axis titles, responsive settings, legend and tooltip configuration objects.
+					- Use consistent and visually distinct colors for dataset backgrounds and borders.
+					- Do NOT include any JavaScript functions, callbacks, or expressions.
+					- For any callbacks or dynamic features, use empty objects or omit them.
+					- Format numeric values as plain numbers, no string formatting.
+					- The output must be parsable by JSON.parse().
+					- Output ONLY the JSON object, no additional text or explanation.
+					If input data is invalid or insufficient to generate a chart, output an empty JSON object: {}.
+					`;
+					let attempt = 0;
+					while (attempt < maxRetry) {
+						loadingChart.style.display = 'inline-block';
+						const session = await startChatSession("gemini-2.5-flash");
+						const responseParts = await session.sendMessage(prompt);
+						try {
+							loadingChart.style.display = 'none';
+							const responseText = responseParts.filter(p => p.text).map(p => p.text).join('').trim();
+							const jsonText = extractFirstJSONObject(responseText);
+							const chartConfig = JSON.parse(jsonText);
+							return chartConfig;
+						} catch (err) {
+							console.log("Retry: aiAgentGenerateChartConfig");
+							loadingChart.style.display = 'none';
+							attempt++;
+							if (attempt >= maxRetry) throw new Error("Failed to generate chart config: " + err.message);
+							await new Promise(r => setTimeout(r, 500));
+						}
+					}
+				}
+				
+				async function aiAgentGenerateExplanation(chartConfig, language = 'English', maxRetry = 3) {
+					const prompt = `
+					You are a senior data analyst preparing a professional report for senior management.
+					Please provide the report in ${language}.
+					Given the following Chart.js configuration JSON data representing key performance metrics from an ERP system process:
+					${JSON.stringify(chartConfig, null, 2)}
+					Please provide a clear, concise, and formal report structured as follows:
+					1. Executive Summary — Describe the chart’s purpose and summarize the overall findings.
+					2. Key Observations — Identify important insights like trends, comparisons, anomalies, ratios, etc.
+					3. Business Implications — Explain impact on business or operations.
+					4. Actionable Recommendations — Practical suggestions based on data.
+					5. Potential Risks or Considerations — Any risks or data issues to monitor.
+					6. Data Summary — Summarize key data points.
+					Use professional language appropriate for senior management. Present the report in bullet points or concise paragraphs. Output only the report text.
+					`;
+					let attempt = 0;
+					while (attempt < maxRetry) {
+						try {
+							loadingExplanation.style.display = 'inline-block';
+							const session = await startChatSession("gemini-2.5-flash");
+							const responseParts = await session.sendMessage(prompt);
+							loadingExplanation.style.display = 'none';
+							const explanationText = responseParts.filter(p => p.text).map(p => p.text).join('\n').trim();
+							return explanationText;
+						} catch (err) {
+							console.log("Retry: aiAgentGenerateExplanation");
+							loadingExplanation.style.display = 'none';
+							attempt++;
+							if (attempt >= maxRetry) throw new Error("Failed to generate explanation: " + err.message);
+							await new Promise(r => setTimeout(r, 500));
+						}
+					}
+				}
+				
+				csvInput.addEventListener('change', (e) => {
+					const file = e.target.files[0];
+					if (!file) return;
+					explanationEl.textContent = "Reading CSV file...";
+					dataTableDiv.innerHTML = "";
+					if (currentChart) currentChart.destroy();
+					const reader = new FileReader();
+					reader.onload = async function (event) {
+						const rawCsvText = event.target.result;
+						try {
+							explanationEl.textContent = "AI extracting clean table data...";
+							const cleanData = await aiAgentExtractTable(rawCsvText);
+							renderDataTable(cleanData);
+							const chartType = chartTypeSelect.value;
+							explanationEl.textContent = "AI generating chart configuration...";
+							const chartConfig = await aiAgentGenerateChartConfig(cleanData, chartType);
+							window.currentChartConfig = chartConfig;
+							renderChart(chartConfig, chartType);
+							explanationEl.textContent = "AI generating chart explanation...";
+							const language = languageSelect.value || 'English';
+							const explanation = await aiAgentGenerateExplanation(chartConfig, language);
+							renderExplanation(explanation);
+						} catch (err) {
+							explanationEl.textContent = "Error: " + err.message;
+							dataTableDiv.innerHTML = "";
+							if (currentChart) currentChart.destroy();
+						}
+					};
+					reader.readAsText(file);
+				});
+				
+				chartTypeSelect.addEventListener('change', async () => {
+					if (!window.cleanDataCache || window.cleanDataCache.length === 0) return;
+					explanationEl.textContent = "Regenerating chart and explanation with new chart type...";
+					try {
+						const chartType = chartTypeSelect.value;
+						const chartConfig = await aiAgentGenerateChartConfig(window.cleanDataCache, chartType);
+						window.currentChartConfig = chartConfig;
+						renderChart(chartConfig, chartType);
+						const language = languageSelect.value || 'English';
+						const explanation = await aiAgentGenerateExplanation(chartConfig, language);
+						renderExplanation(explanation);
+					} catch (err) {
+						explanationEl.textContent = "Error: " + err.message;
+						if (currentChart) currentChart.destroy();
+					}
+				});
+				
+				function updateFontFamily() {
+					if (languageSelect.value === 'Mandarin') {
+						explanationEl.style.fontFamily = '"FangSong", serif';
+					} else {
+						explanationEl.style.fontFamily = 'Arial, sans-serif';
+					}
+				}
+				updateFontFamily();
+				
+				languageSelect.addEventListener('change', async () => {
+					updateFontFamily();
+					if (!window.currentChartConfig) return;
+					try {
+						explanationEl.textContent = "Regenerating explanation in new language...";
+						loadingExplanation.style.display = 'inline-block';
+						const language = languageSelect.value || 'English';
+						const explanation = await aiAgentGenerateExplanation(window.currentChartConfig, language);
+						loadingExplanation.style.display = 'none';
+						renderExplanation(explanation);
+					} catch (err) {
+						loadingExplanation.style.display = 'none';
+						explanationEl.textContent = "Error regenerating explanation: " + err.message;
+					}
+				});
+				
+				saveHtmlBtn.addEventListener('click', () => {
+					const dataTableExists = $.fn.DataTable.isDataTable('#dataTableTable');
+					if (dataTableExists) {
+						$('#dataTableTable').DataTable().destroy();
+					}
+					
+					try {
+						const clonedBody = document.body.cloneNode(true);
+						
+						const controlsDiv = clonedBody.querySelector('div[style*="margin-bottom: 15px"]');
+						if (controlsDiv) controlsDiv.remove();
+						
+						const saveBtnClone = clonedBody.querySelector('#saveHtmlBtn');
+						if (saveBtnClone) saveBtnClone.remove();
+						
+						let chartConfigString = JSON.stringify(window.currentChartConfig || {});
+						let cleanDataString = JSON.stringify(window.cleanDataCache || []);
+						const chartType = chartTypeSelect.value;
+						
+						const standaloneScript = `
+						<script>
+							const chartConfig = ${chartConfigString};
+							const cleanData = ${cleanDataString};
+							const originalChartType = '${chartType}';
+							
+							function renderChart(config, chartType) {
+								if (chartType === 'area' && config.type === 'line' && Array.isArray(config.data.datasets)) {
+									config.data.datasets.forEach(ds => {
+										ds.fill = true;
+										if (!ds.backgroundColor) ds.backgroundColor = 'rgba(75, 192, 192, 0.2)';
+									});
+								}
+								const ctx = document.getElementById('chartCanvas').getContext('2d');
+								new Chart(ctx, config);
+							}
+							
+							function initializeDataTableWithSubtotal(columns, data) {
+								if ($.fn.DataTable.isDataTable('#dataTableTable')) {
+									$('#dataTableTable').DataTable().destroy();
+								}
+								const numericCols = columns.filter(col =>
+								data.every(row => {
+									const val = row[col];
+									return val !== null && val !== undefined && !isNaN(parseFloat(String(val).replace(/,/g, ''))) && isFinite(parseFloat(String(val).replace(/,/g, '')));
+								})
+								);
+								$('#dataTableTable').DataTable({
+									paging: true,
+									searching: true,
+									info: true,
+									order: [],
+									// === ADD THIS LINE ===
+									lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+									footerCallback: function (row, dataRows, start, end, display) {
+										let api = this.api();
+										$(api.columns().footer()).html('');
+										numericCols.forEach(col => {
+											const colIndex = columns.indexOf(col);
+											let total = api.column(colIndex, { page: 'current' }).data().reduce(function (a, b) {
+												let num = parseFloat(String(b).replace(/,/g, ''));
+												return a + (isNaN(num) ? 0 : num);
+											}, 0);
+											const formattedTotal = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+											$(api.column(colIndex).footer()).html(formattedTotal);
+										});
+										
+										let totalLabelPlaced = false;
+										for (let i = 0; i < columns.length; i++) {
+											if (!numericCols.includes(columns[i])) {
+												$(api.column(i).footer()).html('Total (current page)');
+												totalLabelPlaced = true;
+												break;
+											}
+										}
+										if (!totalLabelPlaced && columns.length > 0) {
+											$(api.column(0).footer()).html('Total (current page)');
+										}
+									}
+								});
+							}
+							
+							document.addEventListener('DOMContentLoaded', () => {
+								const explanationText = document.getElementById('explanationText');
+								if(explanationText) {
+									explanationText.setAttribute('contenteditable', 'false');
+									explanationText.style.cursor = 'default';
+								}
+								document.querySelectorAll('.loading-spinner').forEach(el => el.style.display = 'none');
+								if (Object.keys(chartConfig).length > 0) {
+									renderChart(chartConfig, originalChartType);
+								}
+								if (cleanData.length > 0) {
+									const columns = Object.keys(cleanData[0]);
+									initializeDataTableWithSubtotal(columns, cleanData);
+								}
+							});
+						</`+`script>
+						`;
+						
+						const htmlContent = `
+						<!DOCTYPE html>
+						<html lang="en">
+							<head>
+								<meta charset="UTF-8">
+								<title>Saved Chart and Data</title>
+								<meta name="viewport" content="width=device-width, initial-scale=1.0">
+								${document.head.innerHTML}
+							</head>
+							<body>
+								${clonedBody.innerHTML}
+								${standaloneScript}
+							</body>
+						</html>
+						`;
+						
+						const blob = new Blob([htmlContent], { type: 'text/html' });
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = 'chart-report.html';
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+						
+					} catch (err) {
+						console.error("Failed to save HTML:", err);
+						alert("Error saving file: " + err.message);
+					} finally {
+						if (dataTableExists && window.cleanDataCache) {
+							const columns = Object.keys(window.cleanDataCache[0]);
+							initializeDataTableWithSubtotal(columns, window.cleanDataCache);
+						}
+					}
+				});
+			</script>
+			
+		</body>
+	</html>
+	
