@@ -1,0 +1,454 @@
+{
+  "kols": [
+    {
+      "id": 5,
+      "name": "Mongabong",
+      "platforms": [
+        {
+          "platformName": "TikTok",
+          "handle": "Mongabong",
+          "followers": 67400,
+          "id": "p8",
+          "countries": [
+            {
+              "countryCode": "SG",
+              "percentage": 63,
+              "exactNumber": 202860,
+              "id": "c5"
+            },
+            {
+              "countryCode": "MY",
+              "percentage": 99,
+              "exactNumber": 66726,
+              "id": "c6"
+            }
+          ],
+          "ageRanges": [],
+          "packages": [],
+          "platformCode": "TT",
+          "genders": []
+        },
+        {
+          "platformName": "Instagram",
+          "handle": "Mongabong",
+          "followers": 322000,
+          "id": "p10",
+          "ageRanges": [
+            {
+              "ageRangeCode": "2544",
+              "percentage": 71.9,
+              "exactNumber": 231518
+            }
+          ],
+          "packages": [
+            {
+              "packageCode": "p001",
+              "quotationPrice": 10000
+            }
+          ],
+          "platformCode": "IG",
+          "countries": [
+            {
+              "countryCode": "SG",
+              "percentage": 41.1,
+              "exactNumber": 132342
+            },
+            {
+              "countryCode": "MY",
+              "percentage": 16.7,
+              "exactNumber": 53774
+            }
+          ],
+          "genders": [
+            {
+              "genderCode": "M",
+              "percentage": 11,
+              "exactNumber": 35420
+            }
+          ]
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 6,
+      "name": "Dewychoo",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Dewychoo",
+          "followers": 188000,
+          "id": "p11",
+          "platformCode": "IG",
+          "countries": [],
+          "ageRanges": [
+            {
+              "ageRangeCode": "2544",
+              "percentage": 22.5,
+              "exactNumber": 42300
+            }
+          ],
+          "packages": [],
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Dewychoo",
+          "followers": 243500,
+          "id": "p25",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 7,
+      "name": "Patrinechoo",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Patrinechoo",
+          "followers": 156000,
+          "id": "p12",
+          "platformCode": "IG",
+          "countries": [
+            {
+              "countryCode": "SG",
+              "percentage": 10,
+              "exactNumber": 15600
+            },
+            {
+              "countryCode": "MY",
+              "percentage": 10,
+              "exactNumber": 15600
+            }
+          ],
+          "ageRanges": [
+            {
+              "ageRangeCode": "2544",
+              "percentage": 71,
+              "exactNumber": 110760
+            }
+          ],
+          "packages": [],
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Patrinechoo",
+          "followers": 243500,
+          "id": "p26",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 8,
+      "name": "Speishi",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Speishi",
+          "followers": 372000,
+          "id": "p13",
+          "platformCode": "IG",
+          "countries": [
+            {
+              "countryCode": "SG",
+              "percentage": 389,
+              "exactNumber": 1447080
+            },
+            {
+              "countryCode": "MY",
+              "percentage": 17.5,
+              "exactNumber": 65100
+            }
+          ],
+          "ageRanges": [
+            {
+              "ageRangeCode": "2544",
+              "percentage": 63.2,
+              "exactNumber": 235104
+            }
+          ],
+          "packages": [],
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Speishi",
+          "followers": 97100,
+          "id": "p27",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 9,
+      "name": "Valerie Wang",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Valerie Wang",
+          "followers": 53000,
+          "id": "p14",
+          "platformCode": "IG",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 10,
+      "name": "Isabelle",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Isabelle",
+          "followers": 61900,
+          "id": "p15",
+          "platformCode": "IG",
+          "countries": [],
+          "ageRanges": [
+            {
+              "ageRangeCode": "2544",
+              "percentage": 37.1,
+              "exactNumber": 22965
+            }
+          ],
+          "packages": [],
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Isabelle",
+          "followers": 61300,
+          "id": "p24",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 11,
+      "name": "Yiting",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Yiting",
+          "followers": 52100,
+          "id": "p16",
+          "platformCode": "IG",
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Yiting",
+          "followers": 103500,
+          "id": "p28",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 12,
+      "name": "Grazeglazee",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Grazeglazee",
+          "followers": 248000,
+          "id": "p17",
+          "platformCode": "IG",
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Grazeglazee",
+          "followers": 531900,
+          "id": "p29",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 13,
+      "name": "Amebeverly",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Amebeverly",
+          "followers": 160000,
+          "id": "p18",
+          "platformCode": "IG",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 14,
+      "name": "glaglathis",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "glaglathis",
+          "followers": 160000,
+          "id": "p19",
+          "platformCode": "IG",
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "glaglathis",
+          "followers": 43500,
+          "id": "p30",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 15,
+      "name": "Kelly Tan",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Kelly Tan",
+          "followers": 115000,
+          "id": "p20",
+          "platformCode": "IG",
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "Kelly Tan",
+          "followers": 171100,
+          "id": "p31",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 16,
+      "name": "Kimberly Chan",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Kimberly Chan",
+          "followers": 122000,
+          "id": "p21",
+          "platformCode": "IG",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 17,
+      "name": "Jazliyanaparis",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "Jazliyanaparis",
+          "followers": 63000,
+          "id": "p22",
+          "platformCode": "IG",
+          "genders": []
+        }
+      ],
+      "countries": []
+    },
+    {
+      "id": 18,
+      "name": "theroycelee",
+      "platforms": [
+        {
+          "platformName": "Instagram",
+          "handle": "theroycelee",
+          "followers": 157000,
+          "id": "p23",
+          "platformCode": "IG",
+          "genders": []
+        },
+        {
+          "platformName": "TikTok",
+          "platformCode": "TT",
+          "handle": "theroycelee",
+          "followers": 120200,
+          "id": "p32",
+          "genders": []
+        }
+      ],
+      "countries": []
+    }
+  ],
+  "countries": [
+    {
+      "code": "SG",
+      "desc": "Singapore",
+      "id": 1
+    },
+    {
+      "code": "MY",
+      "desc": "Malaysia",
+      "id": 2
+    },
+    {
+      "code": "ID",
+      "desc": "Indonesia",
+      "id": 3
+    }
+  ],
+  "genders": [
+    {
+      "code": "M",
+      "desc": "Male",
+      "id": 1
+    },
+    {
+      "code": "F",
+      "desc": "Female",
+      "id": 2
+    }
+  ],
+  "age_ranges": [
+    {
+      "code": "2544",
+      "desc": "25 - 44",
+      "id": 1
+    }
+  ],
+  "packages": [
+    {
+      "code": "p001",
+      "desc": "1 IGReels + 3 IGStory",
+      "id": 1
+    }
+  ],
+  "platforms": [
+    {
+      "code": "TT",
+      "desc": "TikTok",
+      "id": 1
+    },
+    {
+      "code": "IG",
+      "desc": "Instagram",
+      "id": 2
+    }
+  ]
+}
