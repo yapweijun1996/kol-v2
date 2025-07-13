@@ -1,6 +1,6 @@
 // --- IndexedDB Setup ---
 const DB_NAME = 'kol_management_db';
-const DB_VERSION = 7; // Incremented version for gender
+const DB_VERSION = 8; // Incremented version for gender
 const STORE_NAME = 'kols';
         const STORES = {
             kols: 'kols',
@@ -107,19 +107,16 @@ const STORE_NAME = 'kols';
                     if (!db.objectStoreNames.contains(STORES.platforms)) {
                         const platformStore = db.createObjectStore(STORES.platforms, { keyPath: 'id', autoIncrement: true });
                         // Add initial platform data
-                        platformStore.transaction.oncomplete = (event) => {
-                            const platformObjectStore = db.transaction(STORES.platforms, 'readwrite').objectStore(STORES.platforms);
-                            const initialPlatforms = [
-                                { code: 'TT', desc: 'TikTok' },
-                                { code: 'IG', desc: 'Instagram' },
-                                { code: 'YT', desc: 'YouTube' },
-                                { code: 'TW', desc: 'Twitter' },
-                                { code: 'TTV', desc: 'Twitch' }
-                            ];
-                            initialPlatforms.forEach(platform => {
-                                platformObjectStore.add(platform);
-                            });
-                        };
+                        const initialPlatforms = [
+                            { code: 'TT', desc: 'TikTok' },
+                            { code: 'IG', desc: 'Instagram' },
+                            { code: 'YT', desc: 'YouTube' },
+                            { code: 'TW', desc: 'Twitter' },
+                            { code: 'TTV', desc: 'Twitch' }
+                        ];
+                        initialPlatforms.forEach(platform => {
+                            platformStore.add(platform);
+                        });
                     }
                 }
                  // Migration for version 7: Add genders store
