@@ -225,6 +225,37 @@
                 <div class="chart-container">
                     <canvas id="kol-package-quotation-chart"></canvas>
                 </div>
+                <button class="btn-secondary" id="ai-package-chart-btn" style="display: none; margin-top: 10px;">AI Chart Analysis</button>
+                <div id="ai-package-controls" style="display: none; margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="ai-package-chart-type-select">Select Chart Type:</label>
+                        <select id="ai-package-chart-type-select">
+                            <option value="bar">Bar</option>
+                            <option value="line">Line</option>
+                            <option value="pie">Pie</option>
+                            <option value="doughnut">Doughnut</option>
+                            <option value="polarArea">Polar Area</option>
+                            <option value="radar">Radar</option>
+                            <option value="scatter">Scatter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-package-summary-prompt">AI Summary Prompt:</label>
+                        <textarea id="ai-package-summary-prompt" rows="3" placeholder="e.g., 'Summarize the top 3 KOLs'"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ai-package-language-select">Select Language:</label>
+                        <select id="ai-package-language-select">
+                            <option value="English">English</option>
+                            <option value="Mandarin">Mandarin</option>
+                            <option value="Malay">Malay</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container" style="margin-top: 20px;">
+                    <canvas id="ai-generated-package-chart" style="min-height: 433px;"></canvas>
+                </div>
+                <div id="ai-package-explanation" style="display: none; margin-top: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></div>
             </div>
         </div>
         <div id="settings-section" class="hidden">

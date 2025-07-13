@@ -1,6 +1,6 @@
 // --- IndexedDB Setup ---
 const DB_NAME = 'kol_management_db';
-const DB_VERSION = 8; // Incremented version for gender
+const DB_VERSION = 9; // Incremented version for package items
 const STORE_NAME = 'kols';
         const STORES = {
             kols: 'kols',
@@ -138,6 +138,38 @@ const STORE_NAME = 'kols';
                                 kol.platforms.forEach(platform => {
                                     if (!platform.genders) {
                                         platform.genders = [];
+                                    }
+                                });
+                            }
+                            cursor.update(kol);
+                            cursor.continue();
+                        }
+                    };
+                }
+
+                // Migration for version 9: Update packages structure
+                if (event.oldVersion < 9) {
+                    const transaction = event.currentTarget.transaction;
+                    const objectStore = transaction.objectStore(STORE_NAME);
+                    objectStore.openCursor().onsuccess = (event) => {
+                        const cursor = event.target.result;
+                        if (cursor) {
+                            const kol = cursor.value;
+                            if (kol.platforms) {
+                                kol.platforms.forEach(platform => {
+                                    if (platform.packages) {
+                                        platform.packages = platform.packages.map(pkg => {
+                                            if (pkg.quotationPrice !== undefined) {
+                                                return {
+                                                    packageCode: pkg.packageCode,
+                                                    items: [{
+                                                        desc: pkg.whatsIncluded || 'Initial Item',
+                                                        price: pkg.quotationPrice
+                                                    }]
+                                                };
+                                            }
+                                            return pkg;
+                                        });
                                     }
                                 });
                             }
@@ -701,11 +733,44 @@ const STORE_NAME = 'kols';
             const renderPackageManagement = async (platform) => {
                 packagesManagementContainer.innerHTML = '';
                 const packageOptions = await getPackageOptionsFromDB();
+
+                const updateSubtotal = (table) => {
+                    const subtotalEl = table.nextElementSibling.querySelector('.subtotal-value');
+                    let subtotal = 0;
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        const priceInput = row.querySelector('.item-price-input');
+                        const price = parseFloat(priceInput.value);
+                        if (!isNaN(price)) {
+                            subtotal += price;
+                        }
+                    });
+                    subtotalEl.textContent = subtotal.toFixed(2);
+                };
+
+                const addPackageItemRow = (tableBody, item = { desc: '', price: '' }) => {
+                    const row = document.createElement('tr');
+                    const rowCount = tableBody.rows.length + 1;
+                    row.innerHTML = `
+                        <td>${rowCount}</td>
+                        <td><input type="text" class="item-desc-input" value="${item.desc}" placeholder="Item Description"></td>
+                        <td><input type="number" class="item-price-input" value="${item.price}" placeholder="0.00" step="0.01"></td>
+                        <td><button type="button" class="btn-danger btn-delete-item">Delete</button></td>
+                    `;
+                    tableBody.appendChild(row);
+
+                    row.querySelector('.btn-delete-item').addEventListener('click', () => {
+                        row.remove();
+                        updateSubtotal(tableBody.parentElement);
+                    });
+
+                    row.querySelector('.item-price-input').addEventListener('input', () => {
+                        updateSubtotal(tableBody.parentElement);
+                    });
+                };
+
                 packageOptions.forEach(pkg => {
                     const existingPackage = (platform.packages || []).find(p => p.packageCode === pkg.code);
                     const isEnabled = !!existingPackage;
-                    const quotationPrice = existingPackage ? existingPackage.quotationPrice : '';
-                    const whatsIncluded = existingPackage ? existingPackage.whatsIncluded || '' : '';
 
                     const packageDiv = document.createElement('div');
                     packageDiv.classList.add('package-row');
@@ -715,33 +780,47 @@ const STORE_NAME = 'kols';
                                 <input type="checkbox" data-code="${pkg.code}" ${isEnabled ? 'checked' : ''}>
                                 ${pkg.desc}
                             </label>
-                            <div class="input-group quotation-price-group">
-                                <label>Quotation Price</label>
-                                <input type="number" class="quotation-price-input" value="${quotationPrice}" step="0.01" ${!isEnabled ? 'disabled' : ''}>
-                            </div>
                         </div>
-                        <div class="input-group whats-included-group">
-                            <label>What's Included</label>
-                            <textarea class="whats-included-input" rows="3" ${!isEnabled ? 'disabled' : ''}>${whatsIncluded}</textarea>
+                        <div class="package-items-container" style="display: ${isEnabled ? 'block' : 'none'};">
+                            <table class="package-items-table">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="package-subtotal">
+                                <strong>Subtotal:</strong> SGD <span class="subtotal-value">0.00</span>
+                            </div>
+                            <button type="button" class="btn-secondary btn-add-item" style="margin-top: 10px;">Add Item</button>
                         </div>
                     `;
                     packagesManagementContainer.appendChild(packageDiv);
 
                     const checkbox = packageDiv.querySelector('input[type="checkbox"]');
-                    const priceInput = packageDiv.querySelector('.quotation-price-input');
-                    const whatsIncludedInput = packageDiv.querySelector('.whats-included-input');
-                    
-                    // Set initial state
-                    priceInput.disabled = !checkbox.checked;
-                    whatsIncludedInput.disabled = !checkbox.checked;
+                    const itemsContainer = packageDiv.querySelector('.package-items-container');
+                    const tableBody = packageDiv.querySelector('tbody');
+                    const addItemBtn = packageDiv.querySelector('.btn-add-item');
+
+                    if (isEnabled && existingPackage.items) {
+                        existingPackage.items.forEach(item => addPackageItemRow(tableBody, item));
+                        updateSubtotal(tableBody.parentElement);
+                    }
 
                     checkbox.addEventListener('change', () => {
-                        priceInput.disabled = !checkbox.checked;
-                        whatsIncludedInput.disabled = !checkbox.checked;
+                        itemsContainer.style.display = checkbox.checked ? 'block' : 'none';
                         if (!checkbox.checked) {
-                            priceInput.value = '';
-                            whatsIncludedInput.value = '';
+                            tableBody.innerHTML = '';
+                            updateSubtotal(tableBody.parentElement);
                         }
+                    });
+
+                    addItemBtn.addEventListener('click', () => {
+                        addPackageItemRow(tableBody);
                     });
                 });
             };
@@ -1222,12 +1301,17 @@ const STORE_NAME = 'kols';
                     const checkbox = row.querySelector('input[type="checkbox"]');
                     if (checkbox.checked) {
                         const code = checkbox.dataset.code;
-                        const price = parseFloat(row.querySelector('.quotation-price-input').value);
-                        const whatsIncluded = row.querySelector('.whats-included-input').value;
-                        updatedPackages.push({ 
-                            packageCode: code, 
-                            quotationPrice: isNaN(price) ? 0 : price,
-                            whatsIncluded: whatsIncluded
+                        const items = [];
+                        row.querySelectorAll('.package-items-table tbody tr').forEach(itemRow => {
+                            const desc = itemRow.querySelector('.item-desc-input').value;
+                            const price = parseFloat(itemRow.querySelector('.item-price-input').value);
+                            if (desc && !isNaN(price)) {
+                                items.push({ desc, price });
+                            }
+                        });
+                        updatedPackages.push({
+                            packageCode: code,
+                            items: items
                         });
                     }
                 });
@@ -1369,13 +1453,22 @@ const STORE_NAME = 'kols';
             let kolFollowersChart = null;
             let kolPackageQuotationChart = null;
             let aiGeneratedChart = null;
+            let aiGeneratedPackageChart = null;
             let currentFollowersReportData = [];
+            let currentPackageReportData = [];
             const aiChartBtn = document.getElementById('ai-chart-btn');
             const aiExplanationDiv = document.getElementById('ai-explanation');
             const aiControlsDiv = document.getElementById('ai-controls');
             const aiChartTypeSelect = document.getElementById('ai-chart-type-select');
             const aiSummaryPrompt = document.getElementById('ai-summary-prompt');
             const aiLanguageSelect = document.getElementById('ai-language-select');
+
+            const aiPackageChartBtn = document.getElementById('ai-package-chart-btn');
+            const aiPackageExplanationDiv = document.getElementById('ai-package-explanation');
+            const aiPackageControlsDiv = document.getElementById('ai-package-controls');
+            const aiPackageChartTypeSelect = document.getElementById('ai-package-chart-type-select');
+            const aiPackageSummaryPrompt = document.getElementById('ai-package-summary-prompt');
+            const aiPackageLanguageSelect = document.getElementById('ai-package-language-select');
 
             // --- AI Agent Functions ---
             const generationConfig = {
@@ -1616,6 +1709,54 @@ const STORE_NAME = 'kols';
                 });
             };
 
+            const renderAiGeneratedPackageChart = (chartData, type = 'bar', options = { scales: { y: { beginAtZero: true } } }) => {
+                const ctx = document.getElementById('ai-generated-package-chart').getContext('2d');
+                if (aiGeneratedPackageChart) {
+                    aiGeneratedPackageChart.destroy();
+                }
+                aiGeneratedPackageChart = new Chart(ctx, {
+                    type: type,
+                    data: chartData,
+                    options: options
+                });
+            };
+
+            const handleAiPackageChartGeneration = async () => {
+                if (currentPackageReportData.length === 0) {
+                    alert('Please generate a report first.');
+                    return;
+                }
+
+                const selectedChartType = aiPackageChartTypeSelect.value;
+                const userPrompt = aiPackageSummaryPrompt.value.trim();
+                const selectedLanguage = aiPackageLanguageSelect.value;
+
+                aiPackageChartBtn.disabled = true;
+                aiPackageChartBtn.textContent = 'Analyzing...';
+                aiPackageExplanationDiv.style.display = 'block';
+                aiPackageExplanationDiv.innerHTML = '<i>AI is analyzing the data and generating a new chart...</i>';
+
+                try {
+                    const chartConfig = await aiAgentGenerateChartConfig(currentPackageReportData, selectedChartType);
+                    
+                    aiPackageExplanationDiv.innerHTML = '<i>AI is generating the explanation...</i>';
+                    const explanation = await aiAgentGenerateExplanation(chartConfig, userPrompt, selectedLanguage);
+                    aiPackageExplanationDiv.innerHTML = marked.parse(explanation);
+
+                    renderAiGeneratedPackageChart(chartConfig.data, chartConfig.type, chartConfig.options);
+
+                } catch (error) {
+                    console.error('AI Chart Generation Error:', error);
+                    alert('An error occurred while generating the AI chart and explanation.');
+                    aiPackageExplanationDiv.innerHTML = '<p style="color: red;">Failed to generate AI analysis.</p>';
+                } finally {
+                    aiPackageChartBtn.disabled = false;
+                    aiPackageChartBtn.textContent = 'AI Chart Analysis';
+                }
+            };
+
+            aiPackageChartBtn.addEventListener('click', handleAiPackageChartGeneration);
+
             const renderReport = (data) => {
                 reportList.innerHTML = '';
                 data.forEach(item => {
@@ -1799,14 +1940,14 @@ const STORE_NAME = 'kols';
                         labels: data.map(item => `${item.kolName} (${item.platformName})`),
                         datasets: [{
                             label: 'Quotation Price (SGD)',
-                            data: data.map(item => item.quotationPrice),
+                            data: data.map(item => item.totalQuotationPrice),
                             backgroundColor: 'rgba(74, 144, 226, 0.5)',
                             borderColor: 'rgba(74, 144, 226, 1)',
                             borderWidth: 1,
                             yAxisID: 'y-axis-price'
                         }, {
                             label: 'Cost / 1k Followers (SGD)',
-                            data: data.map(item => item.followers > 0 ? (item.quotationPrice / item.followers) * 1000 : 0),
+                            data: data.map(item => item.followers > 0 ? (item.totalQuotationPrice / item.followers) * 1000 : 0),
                             backgroundColor: 'rgba(255, 193, 7, 0.5)',
                             borderColor: 'rgba(255, 193, 7, 1)',
                             borderWidth: 1,
@@ -1844,17 +1985,31 @@ const STORE_NAME = 'kols';
             const renderPackageReport = (data) => {
                 packageReportList.innerHTML = '';
                 data.forEach(item => {
-                    const costPer1k = item.followers > 0 ? (item.quotationPrice / item.followers) * 1000 : 0;
+                    const costPer1k = item.followers > 0 ? (item.totalQuotationPrice / item.followers) * 1000 : 0;
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${item.kolName}</td>
                         <td>${item.platformName}</td>
                         <td>${item.followers.toLocaleString()}</td>
-                        <td>${item.quotationPrice.toLocaleString()}</td>
+                        <td>${item.totalQuotationPrice.toLocaleString()}</td>
                         <td>${costPer1k.toFixed(2)}</td>
                     `;
                     packageReportList.appendChild(row);
                 });
+
+                currentPackageReportData = data.map(item => ({
+                    kolName: item.kolName,
+                    platformName: item.platformName,
+                    followers: item.followers,
+                    quotationPrice: item.totalQuotationPrice,
+                    costPer1kFollowers: item.followers > 0 ? parseFloat(((item.totalQuotationPrice / item.followers) * 1000).toFixed(2)) : 0
+                }));
+                
+                aiPackageChartBtn.style.display = 'block';
+                aiPackageControlsDiv.style.display = 'block';
+                aiPackageExplanationDiv.style.display = 'none';
+                aiPackageExplanationDiv.innerHTML = '';
+
                 renderPackageChart(data);
             };
 
@@ -1883,12 +2038,13 @@ const STORE_NAME = 'kols';
                         kol.platforms.forEach(platform => {
                             if (platform.packages) {
                                 const pkg = platform.packages.find(p => p.packageCode === selectedPackageCode);
-                                if (pkg) {
+                                if (pkg && pkg.items) {
+                                    const totalQuotationPrice = pkg.items.reduce((sum, item) => sum + item.price, 0);
                                     reportData.push({
                                         kolName: kol.name,
                                         platformName: platform.platformName,
                                         followers: platform.followers,
-                                        quotationPrice: pkg.quotationPrice
+                                        totalQuotationPrice: totalQuotationPrice
                                     });
                                 }
                             }
