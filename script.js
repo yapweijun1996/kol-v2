@@ -737,7 +737,7 @@ const STORE_NAME = 'kols';
                 const updateSubtotal = (table) => {
                     const subtotalEl = table.nextElementSibling.querySelector('.subtotal-value');
                     let subtotal = 0;
-                    table.querySelectorAll('tbody tr').forEach(row => {
+                    table.querySelectorAll('tbody .package-item-row').forEach(row => {
                         const priceInput = row.querySelector('.item-price-input');
                         const price = parseFloat(priceInput.value);
                         if (!isNaN(price)) {
@@ -748,23 +748,33 @@ const STORE_NAME = 'kols';
                 };
 
                 const addPackageItemRow = (tableBody, item = { desc: '', price: '', remark: '' }) => {
-                    const row = document.createElement('tr');
-                    const rowCount = tableBody.rows.length + 1;
-                    row.innerHTML = `
+                    const itemRow = document.createElement('tr');
+                    itemRow.classList.add('package-item-row');
+                    const rowCount = (tableBody.querySelectorAll('.package-item-row').length) + 1;
+
+                    itemRow.innerHTML = `
                         <td>${rowCount}</td>
                         <td><input type="text" class="item-desc-input" value="${item.desc}" placeholder="Item Description"></td>
                         <td><input type="number" class="item-price-input" value="${item.price}" placeholder="0.00" step="0.01"></td>
-                        <td><input type="text" class="item-remark-input" value="${item.remark || ''}" placeholder="Remark"></td>
                         <td><button type="button" class="btn-danger btn-delete-item">Delete</button></td>
                     `;
-                    tableBody.appendChild(row);
 
-                    row.querySelector('.btn-delete-item').addEventListener('click', () => {
-                        row.remove();
+                    const remarkRow = document.createElement('tr');
+                    remarkRow.classList.add('package-remark-row');
+                    remarkRow.innerHTML = `
+                        <td colspan="4"><textarea class="item-remark-input" placeholder="Remark">${item.remark || ''}</textarea></td>
+                    `;
+
+                    tableBody.appendChild(itemRow);
+                    tableBody.appendChild(remarkRow);
+
+                    itemRow.querySelector('.btn-delete-item').addEventListener('click', () => {
+                        itemRow.remove();
+                        remarkRow.remove();
                         updateSubtotal(tableBody.parentElement);
                     });
 
-                    row.querySelector('.item-price-input').addEventListener('input', () => {
+                    itemRow.querySelector('.item-price-input').addEventListener('input', () => {
                         updateSubtotal(tableBody.parentElement);
                     });
                 };
@@ -789,7 +799,6 @@ const STORE_NAME = 'kols';
                                         <th>No.</th>
                                         <th>Description</th>
                                         <th>Price</th>
-                                        <th>Remark</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -1304,10 +1313,13 @@ const STORE_NAME = 'kols';
                     if (checkbox.checked) {
                         const code = checkbox.dataset.code;
                         const items = [];
-                        row.querySelectorAll('.package-items-table tbody tr').forEach(itemRow => {
+                        const itemRows = row.querySelectorAll('.package-items-table tbody .package-item-row');
+                        itemRows.forEach(itemRow => {
                             const desc = itemRow.querySelector('.item-desc-input').value;
                             const price = parseFloat(itemRow.querySelector('.item-price-input').value);
-                            const remark = itemRow.querySelector('.item-remark-input').value;
+                            const remarkRow = itemRow.nextElementSibling;
+                            const remark = remarkRow ? remarkRow.querySelector('.item-remark-input').value : '';
+                            
                             if (desc && !isNaN(price)) {
                                 items.push({ desc, price, remark });
                             }

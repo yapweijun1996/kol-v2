@@ -335,14 +335,32 @@
         .package-items-table td {
             padding: 12px 8px;
             vertical-align: middle;
+            border-bottom: none;
         }
 
-        .package-items-table input {
+        .package-remark-row td {
+            padding-top: 0;
+            padding-bottom: 12px;
+        }
+
+        .package-items-table .package-item-row:last-of-type + .package-remark-row td {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .package-items-table input,
+        .package-items-table textarea {
             width: 100%;
             box-sizing: border-box;
             padding: 8px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .package-items-table textarea {
+            resize: vertical;
+            min-height: 38px;
         }
 
         .package-items-table th:nth-child(2),
@@ -357,11 +375,6 @@
 
         .package-items-table th:nth-child(4),
         .package-items-table td:nth-child(4) {
-            width: 30%; /* Remark */
-        }
-
-        .package-items-table th:nth-child(5),
-        .package-items-table td:nth-child(5) {
             width: 15%; /* Actions */
         }
 
