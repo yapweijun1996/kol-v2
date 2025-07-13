@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>KOL Management Admin Panel</title>
    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
 <body>
 
@@ -242,7 +243,7 @@
         <div id="view-kols-section">
             <h2>All KOLs</h2>
             <button class="btn-primary" id="add-kol-btn-from-view">Add KOL</button>
-            <table>
+            <table id="kol-table" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -354,6 +355,8 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>

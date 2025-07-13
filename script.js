@@ -445,6 +445,9 @@ const STORE_NAME = 'kols';
             
             // --- FUNCTIONS ---
             const renderKOLs = () => {
+                if ($.fn.DataTable.isDataTable('#kol-table')) {
+                    $('#kol-table').DataTable().destroy();
+                }
                 kolListBody.innerHTML = '';
                 kols.forEach(kol => {
                     const totalFollowers = kol.platforms.reduce((sum, platform) => sum + platform.followers, 0);
@@ -459,6 +462,8 @@ const STORE_NAME = 'kols';
                     `;
                     kolListBody.appendChild(row);
                 });
+
+                $('#kol-table').DataTable();
             };
 
             const renderPlatforms = (kolId) => {

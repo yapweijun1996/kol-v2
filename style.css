@@ -416,3 +416,7 @@
     #ai-controls textarea {
         resize: vertical;
     }
+
+    .dataTables_wrapper {
+        margin-top: 10px;
+    }
