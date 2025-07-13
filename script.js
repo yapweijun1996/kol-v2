@@ -744,16 +744,17 @@ const STORE_NAME = 'kols';
                             subtotal += price;
                         }
                     });
-                    subtotalEl.textContent = subtotal.toFixed(2);
+                    subtotalEl.textContent = subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 };
 
-                const addPackageItemRow = (tableBody, item = { desc: '', price: '' }) => {
+                const addPackageItemRow = (tableBody, item = { desc: '', price: '', remark: '' }) => {
                     const row = document.createElement('tr');
                     const rowCount = tableBody.rows.length + 1;
                     row.innerHTML = `
                         <td>${rowCount}</td>
                         <td><input type="text" class="item-desc-input" value="${item.desc}" placeholder="Item Description"></td>
                         <td><input type="number" class="item-price-input" value="${item.price}" placeholder="0.00" step="0.01"></td>
+                        <td><input type="text" class="item-remark-input" value="${item.remark || ''}" placeholder="Remark"></td>
                         <td><button type="button" class="btn-danger btn-delete-item">Delete</button></td>
                     `;
                     tableBody.appendChild(row);
@@ -788,6 +789,7 @@ const STORE_NAME = 'kols';
                                         <th>No.</th>
                                         <th>Description</th>
                                         <th>Price</th>
+                                        <th>Remark</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -1305,8 +1307,9 @@ const STORE_NAME = 'kols';
                         row.querySelectorAll('.package-items-table tbody tr').forEach(itemRow => {
                             const desc = itemRow.querySelector('.item-desc-input').value;
                             const price = parseFloat(itemRow.querySelector('.item-price-input').value);
+                            const remark = itemRow.querySelector('.item-remark-input').value;
                             if (desc && !isNaN(price)) {
-                                items.push({ desc, price });
+                                items.push({ desc, price, remark });
                             }
                         });
                         updatedPackages.push({
