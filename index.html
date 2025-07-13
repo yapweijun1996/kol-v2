@@ -274,8 +274,9 @@
             <h2 id="kol-detail-name"></h2>
             <div class="tab-nav">
                 <button class="tab-link active" data-tab="platforms">Platforms</button>
+                <button class="tab-link" data-tab="remark">Remark</button>
             </div>
-            <div id="platforms-tab-content">
+            <div id="platforms-tab-content" class="tab-content">
                  <table>
                     <thead>
                         <tr>
@@ -290,7 +291,13 @@
                     </tbody>
                 </table>
                 <button id="add-platform-btn" class="btn-primary" style="margin-top: 20px;">Add Platform</button>
-                
+            </div>
+            <div id="remark-tab-content" class="tab-content hidden">
+                <div class="form-group">
+                    <label for="kol-remark">Remark</label>
+                    <textarea id="kol-remark" rows="10"></textarea>
+                </div>
+                <button id="save-remark-btn" class="btn-primary" style="margin-top: 10px;">Save Remark</button>
             </div>
         </div>
     </main>

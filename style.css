@@ -202,6 +202,10 @@
             color: var(--primary-color);
         }
 
+        .tab-content {
+            /* Styles for tab content panes */
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -417,6 +421,21 @@
         resize: vertical;
     }
 
-    .dataTables_wrapper {
+        .dataTables_wrapper {
         margin-top: 10px;
+    }
+
+    #kol-remark {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #kol-remark:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }

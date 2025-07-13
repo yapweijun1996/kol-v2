@@ -167,7 +167,6 @@ const STORE_NAME = 'kols';
 
             // --- STATE ---
             let currentKOLId = null;
-            let currentTab = 'platforms'; // New: To track active tab - will remain 'platforms' always for this view
 
             // --- DOM ELEMENTS ---
             const kolListBody = document.getElementById('kol-list');
@@ -194,12 +193,12 @@ const STORE_NAME = 'kols';
             const backToListBtn = document.getElementById('back-to-list-btn');
             const addPlatformBtn = document.getElementById('add-platform-btn');
 
-            // Removed tabLinks and tabContents as they are no longer needed for separate tabs
-            // const tabLinks = document.querySelectorAll('.tab-link'); 
-            // const tabContents = { 
-            //     platforms: document.getElementById('platforms-tab-content'),
-            //     countries: document.getElementById('countries-tab-content')
-            // };
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabContents = {
+                platforms: document.getElementById('platforms-tab-content'),
+                remark: document.getElementById('remark-tab-content')
+            };
+            const saveRemarkBtn = document.getElementById('save-remark-btn');
 
             // Form Elements
             const addKolForm = document.getElementById('add-kol-form');
@@ -517,8 +516,10 @@ const STORE_NAME = 'kols';
                 if (kol) {
                     kolDetailName.textContent = kol.name;
                     renderPlatforms(kolId);
-                    // renderCountries(kolId); // Removed as countries are now platform-specific
+                    document.getElementById('kol-remark').value = kol.remark || '';
                     showView('detail');
+                    // Switch to the first tab by default
+                    switchTab('platforms');
                 }
             };
 
@@ -782,6 +783,14 @@ const STORE_NAME = 'kols';
                 return rowDiv;
             };
 
+            const switchTab = (tabId) => {
+                Object.values(tabContents).forEach(content => content.classList.add('hidden'));
+                tabContents[tabId].classList.remove('hidden');
+
+                tabLinks.forEach(link => link.classList.remove('active'));
+                document.querySelector(`.tab-link[data-tab="${tabId}"]`).classList.add('active');
+            };
+
             const addCountryRow = async (country = {}) => {
                 const rowDiv = document.createElement('div');
                 rowDiv.classList.add('country-input-row');
@@ -876,7 +885,7 @@ const STORE_NAME = 'kols';
                         id: nextId++,
                         name: newName,
                         platforms: [],
-                        countries: [] 
+                        remark: ''
                     };
                     kols.push(newKOL);
                     saveKOLsToDB(); 
@@ -917,7 +926,23 @@ const STORE_NAME = 'kols';
                 showView('view');
             });
 
-            addPlatformBtn.addEventListener('click', openModalPlatform); 
+            tabLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchTab(e.target.dataset.tab);
+                });
+            });
+
+            saveRemarkBtn.addEventListener('click', () => {
+                const kol = kols.find(k => k.id === currentKOLId);
+                if (kol) {
+                    kol.remark = document.getElementById('kol-remark').value;
+                    saveKOLsToDB();
+                    alert('Remark saved successfully!');
+                }
+            });
+
+            addPlatformBtn.addEventListener('click', openModalPlatform);
             modalCloseBtnPlatform.addEventListener('click', closeModalPlatform); 
             modalOverlayPlatform.addEventListener('click', (e) => { 
                 if(e.target === modalOverlayPlatform) {
