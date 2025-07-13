@@ -463,6 +463,11 @@ const STORE_NAME = 'kols';
                 });
 
                 $('#kol-table').DataTable();
+
+                // Add onfocus event to the search input
+                $('input[type="search"]').on('focus', function () {
+                    this.select();
+                });
             };
 
             const renderPlatforms = (kolId) => {

@@ -425,6 +425,10 @@
         margin-top: 10px;
     }
 
+    #kol-table {
+        padding-top: 10px;
+    }
+
     #kol-remark {
         width: 100%;
         padding: 10px;
@@ -435,6 +439,12 @@
     }
 
     #kol-remark:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+
+    input[type="search"]:focus {
         outline: none;
         border-color: var(--primary-color);
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
