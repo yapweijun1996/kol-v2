@@ -285,22 +285,45 @@
 
         .package-row {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .package-row label {
-            flex-grow: 1;
+        .package-row:last-child {
+            border-bottom: none;
         }
 
-        .package-row .quotation-price-input {
-            width: 120px;
-        }
-        
-        .package-row label {
+        .package-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            width: 100%;
+        }
+
+        .package-label {
+            flex-grow: 1;
+            font-weight: 600;
+        }
+
+        .quotation-price-group {
+            width: 150px;
+            flex-shrink: 0;
+            margin-left: 20px;
+        }
+
+        .whats-included-group {
+            width: 100%;
+        }
+
+        .package-row .whats-included-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
         }
 
         #sidebar .nav-link {

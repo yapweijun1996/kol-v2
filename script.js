@@ -705,27 +705,42 @@ const STORE_NAME = 'kols';
                     const existingPackage = (platform.packages || []).find(p => p.packageCode === pkg.code);
                     const isEnabled = !!existingPackage;
                     const quotationPrice = existingPackage ? existingPackage.quotationPrice : '';
+                    const whatsIncluded = existingPackage ? existingPackage.whatsIncluded || '' : '';
 
                     const packageDiv = document.createElement('div');
                     packageDiv.classList.add('package-row');
                     packageDiv.innerHTML = `
-                        <label>
-                            <input type="checkbox" data-code="${pkg.code}" ${isEnabled ? 'checked' : ''}>
-                            ${pkg.desc}
-                        </label>
-                        <div class="input-group">
-                            <label>Quotation Price</label>
-                            <input type="number" class="quotation-price-input" value="${quotationPrice}" step="0.01" ${!isEnabled ? 'disabled' : ''}>
+                        <div class="package-header">
+                            <label class="package-label">
+                                <input type="checkbox" data-code="${pkg.code}" ${isEnabled ? 'checked' : ''}>
+                                ${pkg.desc}
+                            </label>
+                            <div class="input-group quotation-price-group">
+                                <label>Quotation Price</label>
+                                <input type="number" class="quotation-price-input" value="${quotationPrice}" step="0.01" ${!isEnabled ? 'disabled' : ''}>
+                            </div>
+                        </div>
+                        <div class="input-group whats-included-group">
+                            <label>What's Included</label>
+                            <textarea class="whats-included-input" rows="3" ${!isEnabled ? 'disabled' : ''}>${whatsIncluded}</textarea>
                         </div>
                     `;
                     packagesManagementContainer.appendChild(packageDiv);
 
                     const checkbox = packageDiv.querySelector('input[type="checkbox"]');
                     const priceInput = packageDiv.querySelector('.quotation-price-input');
+                    const whatsIncludedInput = packageDiv.querySelector('.whats-included-input');
+                    
+                    // Set initial state
+                    priceInput.disabled = !checkbox.checked;
+                    whatsIncludedInput.disabled = !checkbox.checked;
+
                     checkbox.addEventListener('change', () => {
                         priceInput.disabled = !checkbox.checked;
+                        whatsIncludedInput.disabled = !checkbox.checked;
                         if (!checkbox.checked) {
                             priceInput.value = '';
+                            whatsIncludedInput.value = '';
                         }
                     });
                 });
@@ -1208,7 +1223,12 @@ const STORE_NAME = 'kols';
                     if (checkbox.checked) {
                         const code = checkbox.dataset.code;
                         const price = parseFloat(row.querySelector('.quotation-price-input').value);
-                        updatedPackages.push({ packageCode: code, quotationPrice: isNaN(price) ? 0 : price });
+                        const whatsIncluded = row.querySelector('.whats-included-input').value;
+                        updatedPackages.push({ 
+                            packageCode: code, 
+                            quotationPrice: isNaN(price) ? 0 : price,
+                            whatsIncluded: whatsIncluded
+                        });
                     }
                 });
                 platform.packages = updatedPackages;
